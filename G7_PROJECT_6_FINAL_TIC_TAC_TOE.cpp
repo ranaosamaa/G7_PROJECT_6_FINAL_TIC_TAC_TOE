@@ -4,6 +4,7 @@
 #include <limits>
 #include <cstdlib>
 #include <ctime>
+#include <algorithm>
 using namespace std;
 
 // ================= ENUM =================
@@ -69,8 +70,8 @@ public:
 
     // Get cell (IMPLEMENTED)
     char getCell(int r, int c) const {
-        if (r < size && c < size) return grid[r][c];
-        else return ' ';
+        if (r >= 0 && r < size && c >= 0 && c < size) return grid[r][c];
+        return ' ';
     }
 
     // Reset board
@@ -157,50 +158,25 @@ public:
         char ai = symbol;
         char opp = (symbol == 'X') ? 'O' : 'X';
 
-        // Base cases
+        // Base cases: terminal states
         if (board.checkWin(ai)) return 10;
         if (board.checkWin(opp)) return -10;
         if (board.isFull()) return 0;
 
-        int bestScore;
+        int bestScore = -1000;
 
-        int empty = 0;
+        // Try all possible moves
         for (int i = 0; i < board.getSize(); i++) {
             for (int j = 0; j < board.getSize(); j++) {
-                if (board.getCell(i, j) == ' ')
-                    empty++;
-            }
-        }
 
-        bool isAITurn = (empty % 2 == 1);
+                if (board.isValidMove(i, j)) {
+                    Board temp = board;
+                    temp.makeMove(i, j, ai);
 
-        if (isAITurn) {
-            bestScore = -1000;
+                    int score = -evaluateBoard(temp);
 
-            for (int i = 0; i < board.getSize(); i++) {
-                for (int j = 0; j < board.getSize(); j++) {
-                    if (board.isValidMove(i, j)) {
-                        Board temp = board;
-                        temp.makeMove(i, j, ai);
-
-                        int score = evaluateBoard(temp);
-                        bestScore = max(bestScore, score);
-                    }
-                }
-            }
-
-        }
-        else {
-            bestScore = 1000;
-
-            for (int i = 0; i < board.getSize(); i++) {
-                for (int j = 0; j < board.getSize(); j++) {
-                    if (board.isValidMove(i, j)) {
-                        Board temp = board;
-                        temp.makeMove(i, j, opp);
-
-                        int score = evaluateBoard(temp);
-                        bestScore = min(bestScore, score);
+                    if (score > bestScore) {
+                        bestScore = score;
                     }
                 }
             }
@@ -228,7 +204,7 @@ public:
         - Repeat until valid move found
         */
     }
-    void getBestMove(Board& board, int& r, int& c) const {
+    void getBestMove(const Board& board, int& r, int& c) const {
         // goes through every cell on the board and checks if the move is valid.
         // For each valid move, it:
         //    creates a copy of the board
