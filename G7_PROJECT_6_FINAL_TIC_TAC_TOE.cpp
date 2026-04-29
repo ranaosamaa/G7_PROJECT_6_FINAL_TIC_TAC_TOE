@@ -38,21 +38,15 @@ public:
 
     // Check move validity
     bool isValidMove(int r, int c) const {
-        /*
-        - Check bounds (0 <= r,c < size)
-        - Check if cell is empty
-        */
-        return false;
+        return r >= 0 && r < size && c >= 0 && c < size && grid[r][c] == ' ';
     }
 
     // Place move
     bool makeMove(int r, int c, char s) {
-        /*
-        - Use isValidMove
-        - If valid: place symbol and return true
-        - Else return false
-        */
-        return false;
+        
+        if (!isValidMove(r, c)) return false;
+        grid[r][c] = s;
+        return true;
     }
 
     // Check win condition
@@ -81,9 +75,11 @@ public:
 
     // Reset board
     void reset() {
-        /*
-        - Set all cells to ' '
-        */
+        for (int r = 0; r < size; r++) {
+            for (int c = 0; c < size; c++) {
+                grid[r][c] = ' ';
+            }
+        }           
     }
 
     // Get size (IMPLEMENTED)
@@ -156,6 +152,63 @@ public:
     void setDifficulty(Difficulty d) {
         difficulty = d;
     }
+
+    int evaluateBoard(const Board& board) const {
+        char ai = symbol;
+        char opp = (symbol == 'X') ? 'O' : 'X';
+
+        // Base cases
+        if (board.checkWin(ai)) return 10;
+        if (board.checkWin(opp)) return -10;
+        if (board.isFull()) return 0;
+
+        int bestScore;
+
+        int empty = 0;
+        for (int i = 0; i < board.getSize(); i++) {
+            for (int j = 0; j < board.getSize(); j++) {
+                if (board.getCell(i, j) == ' ')
+                    empty++;
+            }
+        }
+
+        bool isAITurn = (empty % 2 == 1);
+
+        if (isAITurn) {
+            bestScore = -1000;
+
+            for (int i = 0; i < board.getSize(); i++) {
+                for (int j = 0; j < board.getSize(); j++) {
+                    if (board.isValidMove(i, j)) {
+                        Board temp = board;
+                        temp.makeMove(i, j, ai);
+
+                        int score = evaluateBoard(temp);
+                        bestScore = max(bestScore, score);
+                    }
+                }
+            }
+
+        }
+        else {
+            bestScore = 1000;
+
+            for (int i = 0; i < board.getSize(); i++) {
+                for (int j = 0; j < board.getSize(); j++) {
+                    if (board.isValidMove(i, j)) {
+                        Board temp = board;
+                        temp.makeMove(i, j, opp);
+
+                        int score = evaluateBoard(temp);
+                        bestScore = min(bestScore, score);
+                    }
+                }
+            }
+        }
+
+        return bestScore;
+    }
+
 
     void getMove(const Board& board, int& r, int& c) override {
         /*
@@ -241,21 +294,22 @@ public:
     }
 
     void displayResult() const {
-        /*
-        - Print winner name + symbol
-        - OR print draw message
-        */
+        if (board.checkWin('X'))
+            cout << p1->getName() << " (X) wins!\n";
+        else if (board.checkWin('O'))
+            cout << p2->getName() << " (O) wins!\n";
+        else
+            cout << "Draw!\n";
     }
 
     void reset() {
-        /*
-        - Reset board
-        */
+        board.reset();
     }
 
     void start() {
         /*
         MAIN GAME LOOP:
+        do:
         - Show menu
         - Setup game mode
         - Loop:
@@ -264,6 +318,7 @@ public:
             - check win/draw
             - switch player
         - Ask replay
+        - reset game if yes
         */
     }
 };
