@@ -228,6 +228,18 @@ public:
         - Repeat until valid move found
         */
     }
+    void getBestMove(Board& board, int& r, int& c) const {
+        // goes through every cell on the board and checks if the move is valid.
+        // For each valid move, it:
+        //    creates a copy of the board
+        //    applies the move on the copy
+        //    evaluates the result using evaluateBoard()
+        //
+        // It keeps track of the move with the highest score,
+        // and in the end, (row, col) will contain the best possible move.
+        //
+        // Important: the real board is never changed here, only copies are used.
+    }
 };
 
 // ================= GAME =================
@@ -277,7 +289,13 @@ public:
         */
     }
 
-    void handleMove(Player* player) {
+    void handleHumanMove(Player* player) {
+        /*
+        - Get move from player
+        - Validate and apply move on board
+        */
+    }
+    void handleAIMove(Player* player) {
         /*
         - Get move from player
         - Validate and apply move on board
