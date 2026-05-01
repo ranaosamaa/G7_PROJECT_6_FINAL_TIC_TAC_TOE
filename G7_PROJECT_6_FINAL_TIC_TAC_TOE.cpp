@@ -44,7 +44,11 @@ public:
 
     // Place move
     bool makeMove(int r, int c, char s) {
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> 2a9ce79ae6b6050c5129cd8f6f82c4b4b9f41681
         if (!isValidMove(r, c)) return false;
         grid[r][c] = s;
         return true;
@@ -60,6 +64,7 @@ public:
         return false;
     }
 
+<<<<<<< HEAD
   // Check draw
 bool isFull() const {
     for (int i = 0; i < size; i++) {
@@ -69,6 +74,15 @@ bool isFull() const {
     }
     return true;
 }
+=======
+    // Check draw
+    bool isFull() const {
+        /*
+        - Return true if no empty cells remain
+        */
+        return false;
+    }
+>>>>>>> 2a9ce79ae6b6050c5129cd8f6f82c4b4b9f41681
 
     // Get cell (IMPLEMENTED)
     char getCell(int r, int c) const {
@@ -82,7 +96,11 @@ bool isFull() const {
             for (int c = 0; c < size; c++) {
                 grid[r][c] = ' ';
             }
+<<<<<<< HEAD
         }
+=======
+        }           
+>>>>>>> 2a9ce79ae6b6050c5129cd8f6f82c4b4b9f41681
     }
 
     // Get size (IMPLEMENTED)
@@ -137,6 +155,7 @@ public:
         - Ensure move is valid using board.isValidMove()
         - Repeat until valid input is given
         */
+<<<<<<< HEAD
          while (true) {
         cout << name << " (" << symbol << "), enter row and column (1-3): ";
         cin >> r >> c;
@@ -152,6 +171,8 @@ public:
             break;
         }
     }
+=======
+>>>>>>> 2a9ce79ae6b6050c5129cd8f6f82c4b4b9f41681
     }
 };
 
@@ -213,6 +234,7 @@ public:
         - Try blocking opponent win
         - Otherwise pick random move
         */
+<<<<<<< HEAD
          if (difficulty == Difficulty::Easy) {
         // Easy mode: random valid move
         getRandomMove(board, r, c);
@@ -225,6 +247,8 @@ public:
             getRandomMove(board, r, c);
         }
     }
+=======
+>>>>>>> 2a9ce79ae6b6050c5129cd8f6f82c4b4b9f41681
     }
 
     void getRandomMove(const Board& board, int& r, int& c) const {
@@ -232,6 +256,7 @@ public:
         - Generate random row/col
         - Repeat until valid move found
         */
+<<<<<<< HEAD
          srand(time(0));
     do {
         r = rand() % board.getSize();
@@ -256,6 +281,8 @@ void getBestMove(const Board& board, int& r, int& c) const {
             }
         }
     }
+=======
+>>>>>>> 2a9ce79ae6b6050c5129cd8f6f82c4b4b9f41681
     }
     void getBestMove(const Board& board, int& r, int& c) const {
         // goes through every cell on the board and checks if the move is valid.
@@ -329,11 +356,14 @@ public:
         - Get move from player
         - Validate and apply move on board
         */
+<<<<<<< HEAD
          int r, c;
     player->getMove(board, r, c);  // Ask AI for move
     board.makeMove(r, c, player->getSymbol());  // Apply move
     cout << player->getName() << " (" << player->getSymbol()
          << ") plays at (" << r+1 << "," << c+1 << ")\n";
+=======
+>>>>>>> 2a9ce79ae6b6050c5129cd8f6f82c4b4b9f41681
     }
 
     bool checkGameEnd() const {
@@ -380,4 +410,8 @@ int main() {
     Game game;
     game.start();
     return 0;
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 2a9ce79ae6b6050c5129cd8f6f82c4b4b9f41681
