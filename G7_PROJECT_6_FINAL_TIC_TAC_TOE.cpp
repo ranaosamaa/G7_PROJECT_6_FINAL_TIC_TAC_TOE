@@ -322,21 +322,25 @@ public:
     }
 
     void setupPvP() {
-        /*
-        - Ask names
-        - Create 2 HumanPlayer objects
-        - Assign X and O
-        - Set current player
-        */
+       string name1, name2;
+       cout << "Enter name for Player 1 (X): ";
+       cin >> name1;
+       cout << "Enter name for Player 2 (O): ";
+       cin >> name2;
+
+       p1 = new HumanPlayer(name1, 'X');
+       p2 = new HumanPlayer(name2, 'O');
+       current = p1;
     }
 
     void setupPvC(Difficulty d) {
-        /*
-        - Ask player name
-        - Create Human + AI player
-        - Assign symbols
-        - Pass difficulty to AI
-        */
+       string name;
+       cout << "Enter your name: ";
+       cin >> name;
+
+       p1 = new HumanPlayer(name, 'X');
+       p2 = new AIPlayer("Computer", 'O', d);
+       current = p1;
     }
 
     void switchPlayer() {
