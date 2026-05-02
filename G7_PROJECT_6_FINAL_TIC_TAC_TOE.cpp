@@ -17,12 +17,10 @@ private:
     const int size;
 
 public:
-    // Constructor
     Board(int size = 3) : size(size) {
         grid = vector<vector<char>>(size, vector<char>(size, ' '));
     }
 
-    // Display board (IMPLEMENTED)
     void display() const {
         cout << "\n   1   2   3\n";
         for (int i = 0; i < size; i++) {
@@ -37,12 +35,10 @@ public:
         cout << "\n";
     }
 
-    // Check move validity
     bool isValidMove(int r, int c) const {
         return r >= 0 && r < size && c >= 0 && c < size && grid[r][c] == ' ';
     }
 
-    // Place move
     bool makeMove(int r, int c, char s) {
 
         
@@ -51,7 +47,6 @@ public:
         return true;
     }
 
-    // Check win condition
     bool checkWin(char s) const {
 
         for (int i = 0; i < size; i++) {
@@ -113,19 +108,15 @@ bool isFull() const {
         return ' ';
     }
 
-    // Reset board
     void reset() {
         for (int r = 0; r < size; r++) {
             for (int c = 0; c < size; c++) {
                 grid[r][c] = ' ';
             }
         }
-    }           
-
-    // Get size (IMPLEMENTED)
-    int getSize() const {
-        return size;
     }
+
+    int getSize() const { return size; }
 };
 
 // ================= PLAYER =================
@@ -140,23 +131,11 @@ public:
         this->symbol = symbol;
     }
 
-    // Get move (NOW TAKES BOARD)
     virtual void getMove(const Board& board, int& row, int& col) = 0;
 
-    // Getter (IMPLEMENTED)
-    string getName() const {
-        return name;
-    }
-
-    // Getter (IMPLEMENTED)
-    char getSymbol() const {
-        return symbol;
-    }
-
-    // Setter (IMPLEMENTED)
-    void setName(const string& name) {
-        this->name = name;
-    }
+    string getName() const { return name; }
+    char getSymbol() const { return symbol; }
+    void setName(const string& name) { this->name = name; }
 
     virtual ~Player() {}
 };
@@ -175,22 +154,21 @@ public:
         - Repeat until valid input is given
         */
         while (true) {
-        cout << name << " (" << symbol << "), enter row and column (1-3): ";
-        cin >> r >> c;
+            cout << name << " (" << symbol << "), enter row and column (1-3): ";
+            cin >> r >> c;
+            r--; c--;
 
-        // Convert to 0-based
-        r--; c--;
-
-        if (cin.fail() || !board.isValidMove(r, c)) {
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout << "Invalid move. Try again.\n";
-        } else {
-            break;
+            if (cin.fail() || !board.isValidMove(r, c)) {
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cout << "Invalid move. Try again.\n";
+            } else {
+                break;
+            }
         }
     }
-    }
 };
+
 
 // ================= AI PLAYER =================
 class AIPlayer : public Player {
@@ -203,48 +181,34 @@ public:
         this->difficulty = difficulty;
     }
 
-    // Setter (IMPLEMENTED)
-    void setDifficulty(Difficulty d) {
-        difficulty = d;
-    }
+    void setDifficulty(Difficulty d) { difficulty = d; }
 
     int evaluateBoard(const Board& board) const {
         char ai = symbol;
         char opp = (symbol == 'X') ? 'O' : 'X';
 
-        // Base cases: terminal states
         if (board.checkWin(ai)) return 10;
         if (board.checkWin(opp)) return -10;
         if (board.isFull()) return 0;
 
         int bestScore = -1000;
-
-        // Try all possible moves
         for (int i = 0; i < board.getSize(); i++) {
             for (int j = 0; j < board.getSize(); j++) {
-
                 if (board.isValidMove(i, j)) {
                     Board temp = board;
                     temp.makeMove(i, j, ai);
-
                     int score = -evaluateBoard(temp);
-
-                    if (score > bestScore) {
-                        bestScore = score;
-                    }
+                    bestScore = max(bestScore, score);
                 }
             }
         }
-
         return bestScore;
     }
-
 
     void getMove(const Board& board, int& r, int& c) override {
         /*
         EASY:
         - Choose random valid move
-
         HARD:
         - Try winning move
         - Try blocking opponent win
@@ -260,6 +224,9 @@ public:
         // Safety fallback: if no best move found, pick random
         if (r == -1 || c == -1) {
             getRandomMove(board, r, c);
+        } else {
+            getBestMove(board, r, c);
+            if (r == -1 || c == -1) getRandomMove(board, r, c);
         }
     }
     }
@@ -276,23 +243,22 @@ public:
     } while (!board.isValidMove(r, c));
 }
 
-void getBestMove(const Board& board, int& r, int& c) const {
-    int bestScore = -1000;
-    r = c = -1;
-
-    for (int i = 0; i < board.getSize(); i++) {
-        for (int j = 0; j < board.getSize(); j++) {
-            if (board.isValidMove(i, j)) {
-                Board temp = board;
-                temp.makeMove(i, j, symbol);
-                int score = evaluateBoard(temp);
-                if (score > bestScore) {
-                    bestScore = score;
-                    r = i; c = j;
+    void getBestMove(const Board& board, int& r, int& c) const {
+        int bestScore = -1000;
+        r = c = -1;
+        for (int i = 0; i < board.getSize(); i++) {
+            for (int j = 0; j < board.getSize(); j++) {
+                if (board.isValidMove(i, j)) {
+                    Board temp = board;
+                    temp.makeMove(i, j, symbol);
+                    int score = evaluateBoard(temp);
+                    if (score > bestScore) {
+                        bestScore = score;
+                        r = i; c = j;
+                    }
                 }
             }
         }
-    }
     }
 };
 
@@ -305,9 +271,7 @@ private:
     Player* current;
 
 public:
-    Game() : board(3) {
-        p1 = p2 = current = nullptr;
-    }
+    Game() : board(3) { p1 = p2 = current = nullptr; }
 
     void showMenu() {
         cout << "\nTIC-TAC-TOE GAME\n";
@@ -325,7 +289,6 @@ public:
         cin >> name1;
         cout << "Enter name for Player 2 (O): ";
         cin >> name2;
-
         p1 = new HumanPlayer(name1, 'X');
         p2 = new HumanPlayer(name2, 'O');
         current = p1;
@@ -335,36 +298,29 @@ public:
         string name;
         cout << "Enter your name: ";
         cin >> name;
-
         p1 = new HumanPlayer(name, 'X');
         p2 = new AIPlayer("Computer", 'O', d);
         current = p1;
     }
 
-    void switchPlayer() {
-        current = (current == p1) ? p2 : p1;
-    }
+    void switchPlayer() { current = (current == p1) ? p2 : p1; }
 
     void handleHumanMove(Player* player) {
-        /*
-        - Get move from player
-        - Validate and apply move on board
-        */
-    }
-    void handleAIMove(Player* player) {
-        /*
-        - Get move from player
-        - Validate and apply move on board
-        */
         int r, c;
-        player->getMove(board, r, c);  // Ask AI for move
-        board.makeMove(r, c, player->getSymbol());  // Apply move
+        player->getMove(board, r, c);
+        board.makeMove(r, c, player->getSymbol());
+    }
+
+    void handleAIMove(Player* player) {
+        int r, c;
+        player->getMove(board, r, c);
+        board.makeMove(r, c, player->getSymbol());
         cout << player->getName() << " (" << player->getSymbol()
-        << ") plays at (" << r+1 << "," << c+1 << ")\n";
+            << ") plays at (" << r+1 << "," << c+1 << ")\n";
     }
 
     bool checkGameEnd() const {
-        return board.checkWin('X') || board.checkWin('O') || board.isFull();
+        return board.checkWin('X') || board.checkWin('O') || board.isFull(); 
     }
 
     void displayResult() const {
@@ -376,9 +332,7 @@ public:
             cout << "Draw!\n";
     }
 
-    void reset() {
-        board.reset();
-    }
+    void reset() { board.reset(); }
 
     void start() {
         /*
@@ -431,7 +385,6 @@ public:
         }
 }
 };
-
 int main() {
     Game game;
     game.start();
