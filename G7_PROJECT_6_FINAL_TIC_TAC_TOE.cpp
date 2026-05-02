@@ -183,7 +183,7 @@ public:
 
     void setDifficulty(Difficulty d) { difficulty = d; }
 
-    int evaluateBoard(const Board& board) const {
+    int evaluateBoard(const Board& board, bool isMax) const {
         char ai = symbol;
         char opp = (symbol == 'X') ? 'O' : 'X';
 
@@ -191,44 +191,47 @@ public:
         if (board.checkWin(opp)) return -10;
         if (board.isFull()) return 0;
 
-        int bestScore = -1000;
-        for (int i = 0; i < board.getSize(); i++) {
-            for (int j = 0; j < board.getSize(); j++) {
-                if (board.isValidMove(i, j)) {
-                    Board temp = board;
-                    temp.makeMove(i, j, ai);
-                    int score = -evaluateBoard(temp);
-                    bestScore = max(bestScore, score);
+        int best;
+
+        if (isMax) {
+            best = -1000;
+            for (int i = 0; i < board.getSize(); i++) {
+                for (int j = 0; j < board.getSize(); j++) {
+                    if (board.isValidMove(i, j)) {
+                        Board temp = board;
+                        temp.makeMove(i, j, ai);
+                        best = max(best, evaluateBoard(temp, false));
+                    }
                 }
             }
         }
-        return bestScore;
+        else {
+            best = 1000;
+            for (int i = 0; i < board.getSize(); i++) {
+                for (int j = 0; j < board.getSize(); j++) {
+                    if (board.isValidMove(i, j)) {
+                        Board temp = board;
+                        temp.makeMove(i, j, opp);
+                        best = min(best, evaluateBoard(temp, true));
+                    }
+                }
+            }
+        }
+
+        return best;
     }
 
     void getMove(const Board& board, int& r, int& c) override {
-        /*
-        EASY:
-        - Choose random valid move
-        HARD:
-        - Try winning move
-        - Try blocking opponent win
-        - Otherwise pick random move
-        */
         if (difficulty == Difficulty::Easy) {
-        // Easy mode: random valid move
-        getRandomMove(board, r, c);
-    } else {
-        // Hard mode: try best move using evaluation
-        getBestMove(board, r, c);
-
-        // Safety fallback: if no best move found, pick random
-        if (r == -1 || c == -1) {
             getRandomMove(board, r, c);
-        } else {
-            getBestMove(board, r, c);
-            if (r == -1 || c == -1) getRandomMove(board, r, c);
         }
-    }
+        else {
+            getBestMove(board, r, c);
+
+            if (r == -1 || c == -1) {
+                getRandomMove(board, r, c);
+            }
+        }
     }
 
     void getRandomMove(const Board& board, int& r, int& c) const {
@@ -236,7 +239,6 @@ public:
         - Generate random row/col
         - Repeat until valid move found
         */
-        srand(time(0));
     do {
         r = rand() % board.getSize();
         c = rand() % board.getSize();
@@ -251,7 +253,7 @@ public:
                 if (board.isValidMove(i, j)) {
                     Board temp = board;
                     temp.makeMove(i, j, symbol);
-                    int score = evaluateBoard(temp);
+                    int score = evaluateBoard(temp, false);
                     if (score > bestScore) {
                         bestScore = score;
                         r = i; c = j;
@@ -332,7 +334,12 @@ public:
             cout << "Draw!\n";
     }
 
-    void reset() { board.reset(); }
+    void reset() {
+        board.reset();
+        delete p1;
+        delete p2;
+        p1 = p2 = current = nullptr;
+    }
 
     void start() {
         /*
@@ -368,7 +375,7 @@ public:
     
             while (!checkGameEnd()) {
                 board.display();
-                if (current->getName() == "Computer")
+                if (dynamic_cast<AIPlayer*>(current))
                     handleAIMove(current);
                 else
                     handleHumanMove(current);
@@ -386,6 +393,7 @@ public:
 }
 };
 int main() {
+    srand(time(0));
     Game game;
     game.start();
     return 0;
