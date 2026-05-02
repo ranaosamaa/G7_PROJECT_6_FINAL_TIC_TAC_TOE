@@ -44,11 +44,8 @@ public:
 
     // Place move
     bool makeMove(int r, int c, char s) {
-<<<<<<< HEAD
 
-=======
         
->>>>>>> 2a9ce79ae6b6050c5129cd8f6f82c4b4b9f41681
         if (!isValidMove(r, c)) return false;
         grid[r][c] = s;
         return true;
@@ -56,15 +53,51 @@ public:
 
     // Check win condition
     bool checkWin(char s) const {
-        /*
-        - Check rows
-        - Check columns
-        - Check diagonals
-        */
+
+        for (int i = 0; i < size; i++) {
+            bool win = true;
+            for (int j = 0; j < size; j++) {
+                if (grid[i][j] != s) {
+                    win = false;
+                    break;
+                }
+            }
+            if (win) return true;
+        }
+    
+        for (int j = 0; j < size; j++) {
+            bool win = true;
+            for (int i = 0; i < size; i++) {
+                if (grid[i][j] != s) {
+                    win = false;
+                    break;
+                }
+            }
+            if (win) return true;
+        }
+    
+        bool win = true;
+        for (int i = 0; i < size; i++) {
+            if (grid[i][i] != s) {
+                win = false;
+                break;
+            }
+        }
+        if (win) return true;
+    
+        win = true;
+        for (int i = 0; i < size; i++) {
+            if (grid[i][size - 1 - i] != s) {
+                win = false;
+                break;
+            }
+        }
+        if (win) return true;
+    
         return false;
+        
     }
 
-<<<<<<< HEAD
   // Check draw
 bool isFull() const {
     for (int i = 0; i < size; i++) {
@@ -74,16 +107,6 @@ bool isFull() const {
     }
     return true;
 }
-=======
-    // Check draw
-    bool isFull() const {
-        /*
-        - Return true if no empty cells remain
-        */
-        return false;
-    }
->>>>>>> 2a9ce79ae6b6050c5129cd8f6f82c4b4b9f41681
-
     // Get cell (IMPLEMENTED)
     char getCell(int r, int c) const {
         if (r >= 0 && r < size && c >= 0 && c < size) return grid[r][c];
@@ -96,12 +119,8 @@ bool isFull() const {
             for (int c = 0; c < size; c++) {
                 grid[r][c] = ' ';
             }
-<<<<<<< HEAD
         }
-=======
-        }           
->>>>>>> 2a9ce79ae6b6050c5129cd8f6f82c4b4b9f41681
-    }
+    }           
 
     // Get size (IMPLEMENTED)
     int getSize() const {
@@ -155,8 +174,7 @@ public:
         - Ensure move is valid using board.isValidMove()
         - Repeat until valid input is given
         */
-<<<<<<< HEAD
-         while (true) {
+        while (true) {
         cout << name << " (" << symbol << "), enter row and column (1-3): ";
         cin >> r >> c;
 
@@ -171,8 +189,6 @@ public:
             break;
         }
     }
-=======
->>>>>>> 2a9ce79ae6b6050c5129cd8f6f82c4b4b9f41681
     }
 };
 
@@ -234,8 +250,7 @@ public:
         - Try blocking opponent win
         - Otherwise pick random move
         */
-<<<<<<< HEAD
-         if (difficulty == Difficulty::Easy) {
+        if (difficulty == Difficulty::Easy) {
         // Easy mode: random valid move
         getRandomMove(board, r, c);
     } else {
@@ -247,8 +262,6 @@ public:
             getRandomMove(board, r, c);
         }
     }
-=======
->>>>>>> 2a9ce79ae6b6050c5129cd8f6f82c4b4b9f41681
     }
 
     void getRandomMove(const Board& board, int& r, int& c) const {
@@ -256,8 +269,7 @@ public:
         - Generate random row/col
         - Repeat until valid move found
         */
-<<<<<<< HEAD
-         srand(time(0));
+        srand(time(0));
     do {
         r = rand() % board.getSize();
         c = rand() % board.getSize();
@@ -281,20 +293,6 @@ void getBestMove(const Board& board, int& r, int& c) const {
             }
         }
     }
-=======
->>>>>>> 2a9ce79ae6b6050c5129cd8f6f82c4b4b9f41681
-    }
-    void getBestMove(const Board& board, int& r, int& c) const {
-        // goes through every cell on the board and checks if the move is valid.
-        // For each valid move, it:
-        //    creates a copy of the board
-        //    applies the move on the copy
-        //    evaluates the result using evaluateBoard()
-        //
-        // It keeps track of the move with the highest score,
-        // and in the end, (row, col) will contain the best possible move.
-        //
-        // Important: the real board is never changed here, only copies are used.
     }
 };
 
@@ -318,7 +316,7 @@ public:
         cout << "2. Player VS Computer (Easy)\n";
         cout << "3. Player VS Computer (Hard)\n";
         cout << "4. Exit\n";
-        cout << "Select Game Mode: ";
+        cout << "Select Game Mode :";
     }
 
     void setupPvP() {
@@ -344,9 +342,7 @@ public:
     }
 
     void switchPlayer() {
-        /*
-        - Toggle between p1 and p2
-        */
+        current = (current == p1) ? p2 : p1;
     }
 
     void handleHumanMove(Player* player) {
@@ -360,23 +356,15 @@ public:
         - Get move from player
         - Validate and apply move on board
         */
-<<<<<<< HEAD
-         int r, c;
-    player->getMove(board, r, c);  // Ask AI for move
-    board.makeMove(r, c, player->getSymbol());  // Apply move
-    cout << player->getName() << " (" << player->getSymbol()
-         << ") plays at (" << r+1 << "," << c+1 << ")\n";
-=======
->>>>>>> 2a9ce79ae6b6050c5129cd8f6f82c4b4b9f41681
+        int r, c;
+        player->getMove(board, r, c);  // Ask AI for move
+        board.makeMove(r, c, player->getSymbol());  // Apply move
+        cout << player->getName() << " (" << player->getSymbol()
+        << ") plays at (" << r+1 << "," << c+1 << ")\n";
     }
 
     bool checkGameEnd() const {
-        /*
-        - Check win for X
-        - Check win for O
-        - Check draw (board full)
-        */
-        return false;
+        return board.checkWin('X') || board.checkWin('O') || board.isFull();
     }
 
     void displayResult() const {
@@ -406,16 +394,46 @@ public:
         - Ask replay
         - reset game if yes
         */
-    }
+        bool exit = false;
+    
+        while (!exit) {
+            reset();
+    
+            showMenu();
+            int n;
+            cin >> n;
+    
+            if (n == 1)
+                setupPvP();
+            else if (n == 2)
+                setupPvC(Difficulty::Easy);
+            else if (n == 3)
+                setupPvC(Difficulty::Hard);
+            else
+                return;
+    
+            while (!checkGameEnd()) {
+                board.display();
+                if (current->getName() == "Computer")
+                    handleAIMove(current);
+                else
+                    handleHumanMove(current);
+                if (!checkGameEnd())
+                    switchPlayer();
+            }
+            board.display();
+            displayResult();
+            cout << "Wanna Replay? (Y/N): ";
+            char c;
+            cin >> c;
+            if (c != 'Y' && c != 'y')
+                exit = true;
+        }
+}
 };
 
-// ================= MAIN =================
 int main() {
     Game game;
     game.start();
     return 0;
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 2a9ce79ae6b6050c5129cd8f6f82c4b4b9f41681
